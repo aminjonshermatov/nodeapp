@@ -31,7 +31,32 @@ const methods = new Map();
 methods.set('/posts.get', ({response}) => {
     sendJSON(response, posts);
 });
-methods.set('/posts.getById', () => {});
+methods.set('/posts.getById', ({response, searchParams}) => {
+    if (!searchParams.has('id') || Number.isNaN(searchParams.get('id')) || 
+        isNaN(searchParams.get('id')) || Number(searchParams.get('id')) < 1) {
+        sendResponse(response, {status: statusBadRequest});
+        return;
+    }
+
+    const id = Number(searchParams.get('id'));
+
+    if (id > posts.length) {
+        sendResponse(response, {status: statusNotFound});
+        return;
+    }
+
+    posts.forEach((element, index) => {
+        if (element.id === id) {
+            sendJSON(response, element);
+            return;
+        }
+
+        if (index >= posts.length) {
+            sendResponse(response, {status: statusNotFound});
+            return;
+        }
+    })
+});
 methods.set('/posts.post', ({response, searchParams}) => {
     if (!searchParams.has('content')) {
         sendResponse(response, {status: statusBadRequest});
