@@ -71,7 +71,7 @@ methods.set('/posts.post', ({response, searchParams}) => {
 });
 methods.set('/posts.edit', ({response, searchParams}) => {
     if (!searchParams.has('id') || !searchParams.has('content') || Number.isNaN(searchParams.get('id')) || 
-        isNaN(searchParams.get('id')) || Number(searchParams.get('id')) < 1 || searchParams.get('content') == '') {
+        isNaN(searchParams.get('id')) || Number(searchParams.get('id')) < 1 || searchParams.get('content') === '') {
         sendResponse(response, {status: statusBadRequest});
         return;
     }
