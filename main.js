@@ -69,7 +69,29 @@ methods.set('/posts.post', ({response, searchParams}) => {
     posts.unshift(post);
     sendJSON(response, post);
 });
-methods.set('/posts.edit', () => {});
+methods.set('/posts.edit', ({response, searchParams}) => {
+    if (!searchParams.has('id') || !searchParams.has('content') || Number.isNaN(searchParams.get('id')) || 
+        isNaN(searchParams.get('id')) || Number(searchParams.get('id')) < 1 || searchParams.get('content') == '') {
+        sendResponse(response, {status: statusBadRequest});
+        return;
+    }
+
+    const id = Number(searchParams.get('id'));
+    const content = searchParams.get('content');
+
+    if (!posts.some((el) => el.id === id)) {
+        sendResponse(response, {status: statusNotFound});
+        return;
+    }
+
+    posts.forEach((element) => {
+        if (element.id === id) {
+            element.content = content;
+            sendJSON(response, element);
+            return;
+        }
+    });
+});
 methods.set('/posts.delete', () => {});
 
 const server = http.createServer((request, response) => {
