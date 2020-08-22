@@ -7,7 +7,7 @@ const statusNotFound = 404;
 const statusBadRequest = 400;
 const statusOk = 200;
 
-let nextId = 1
+let nextId = 1;
 const posts = [];
 
 function sendResponse(response, {status = statusOk, headers = {}, body = null}) {
@@ -50,7 +50,7 @@ methods.set('/posts.getById', ({response, searchParams}) => {
             sendJSON(response, element);
             return;
         }
-    })
+    });
 });
 methods.set('/posts.post', ({response, searchParams}) => {
     if (!searchParams.has('content')) {
@@ -64,7 +64,7 @@ methods.set('/posts.post', ({response, searchParams}) => {
         id: nextId++,
         content: content,
         created: Date.now(),
-    }
+    };
 
     posts.unshift(post);
     sendJSON(response, post);
