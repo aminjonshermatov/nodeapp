@@ -40,7 +40,7 @@ methods.set('/posts.getById', ({response, searchParams}) => {
 
     const id = Number(searchParams.get('id'));
 
-    if (posts.some((el) => el.id !== id)) {
+    if (!posts.some((el) => el.id === id)) {
         sendResponse(response, {status: statusNotFound});
         return;
     }
