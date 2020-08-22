@@ -92,7 +92,23 @@ methods.set('/posts.edit', ({response, searchParams}) => {
         }
     });
 });
-methods.set('/posts.delete', () => {});
+methods.set('/posts.delete', ({response, searchParams}) => {
+    if (!searchParams.has('id') || Number.isNaN(searchParams.get('id')) || 
+        isNaN(searchParams.get('id')) || Number(searchParams.get('id')) < 1) {
+        sendResponse(response, {status: statusBadRequest});
+        return;
+    }
+
+    const id = Number(searchParams.get('id'));
+    const findIndex = posts.findIndex(element => element.id === id);
+
+    if (findIndex === -1) {
+        sendResponse(response, {status: statusNotFound});
+        return;
+    }
+    sendJSON(response, posts[findIndex]);
+    posts.splice(findIndex, 1);
+});
 
 const server = http.createServer((request, response) => {
     const {pathname, searchParams} = new URL(request.url, `https://${request.headers.host}`);
