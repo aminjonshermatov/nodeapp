@@ -40,19 +40,14 @@ methods.set('/posts.getById', ({response, searchParams}) => {
 
     const id = Number(searchParams.get('id'));
 
-    if (id > posts.length) {
+    if (posts.some((el) => el.id !== id)) {
         sendResponse(response, {status: statusNotFound});
         return;
     }
 
-    posts.forEach((element, index) => {
+    posts.forEach((element) => {
         if (element.id === id) {
             sendJSON(response, element);
-            return;
-        }
-
-        if (index >= posts.length) {
-            sendResponse(response, {status: statusNotFound});
             return;
         }
     })
