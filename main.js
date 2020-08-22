@@ -29,7 +29,7 @@ function sendJSON(response, body) {
 
 const methods = new Map();
 methods.set('/posts.get', ({response}) => {
-    sendJSON(response, posts);
+    sendJSON(response, posts.filter(el => !el.removed));
 });
 methods.set('/posts.getById', ({response, searchParams}) => {
     if (!searchParams.has('id') || Number.isNaN(searchParams.get('id')) || 
@@ -39,8 +39,12 @@ methods.set('/posts.getById', ({response, searchParams}) => {
     }
 
     const id = Number(searchParams.get('id'));
+    const findIndex = posts.findIndex(element => element.id === id);
 
-    if (!posts.some((el) => el.id === id)) {
+    if (findIndex === -1) {
+        sendResponse(response, {status: statusNotFound});
+        return;
+    } else if (posts[findIndex].removed) {
         sendResponse(response, {status: statusNotFound});
         return;
     }
@@ -64,6 +68,7 @@ methods.set('/posts.post', ({response, searchParams}) => {
         id: nextId++,
         content: content,
         created: Date.now(),
+        removed: false
     };
 
     posts.unshift(post);
@@ -76,10 +81,14 @@ methods.set('/posts.edit', ({response, searchParams}) => {
         return;
     }
 
-    const id = Number(searchParams.get('id'));
     const content = searchParams.get('content');
+    const id = Number(searchParams.get('id'));
+    const findIndex = posts.findIndex(element => element.id === id);
 
-    if (!posts.some((el) => el.id === id)) {
+    if (findIndex === -1) {
+        sendResponse(response, {status: statusNotFound});
+        return;
+    } else if (posts[findIndex].removed) {
         sendResponse(response, {status: statusNotFound});
         return;
     }
@@ -105,9 +114,14 @@ methods.set('/posts.delete', ({response, searchParams}) => {
     if (findIndex === -1) {
         sendResponse(response, {status: statusNotFound});
         return;
+    } else if (posts[findIndex].removed) {
+        sendResponse(response, {status: statusNotFound});
+        return;
     }
+
+    posts[findIndex].removed = true;
     sendJSON(response, posts[findIndex]);
-    posts.splice(findIndex, 1);
+    console.log(posts);
 });
 
 const server = http.createServer((request, response) => {
