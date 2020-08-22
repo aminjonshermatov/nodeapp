@@ -121,7 +121,25 @@ methods.set('/posts.delete', ({response, searchParams}) => {
 
     posts[findIndex].removed = true;
     sendJSON(response, posts[findIndex]);
-    console.log(posts);
+});
+methods.set('/posts.restore', ({response, searchParams}) => {
+    const id = Number(searchParams.get('id'));
+    const findIndex = posts.findIndex(element => element.id === id);
+
+    if (!searchParams.has('id') || Number.isNaN(searchParams.get('id')) || 
+        isNaN(searchParams.get('id')) || Number(searchParams.get('id')) < 1 ||
+        !posts[findIndex].removed) {
+        sendResponse(response, {status: statusBadRequest});
+        return;
+    }
+
+    if (findIndex === -1) {
+        sendResponse(response, {status: statusNotFound});
+        return;
+    }
+
+    posts[findIndex].removed = false;
+    sendJSON(response, posts[findIndex]);
 });
 
 const server = http.createServer((request, response) => {
