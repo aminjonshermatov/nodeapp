@@ -1,1 +1,1 @@
-INSERT INTO posts(content) VALUES('Last Post!!!');
+select *  from posts
