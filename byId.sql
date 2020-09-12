@@ -1,1 +1,0 @@
-SELECT id, content, likes, created FROM posts WHERE id = 2 AND removed = FAlSE;

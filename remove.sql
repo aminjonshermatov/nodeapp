@@ -1,1 +1,0 @@
-UPDATE posts SET removed = TRUE WHERE id = 5 AND removed = FALSE;

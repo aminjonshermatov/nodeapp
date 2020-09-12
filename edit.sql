@@ -1,1 +1,0 @@
-UPDATE posts SET likes = likes + 1 WHERE id = 4 AND removed = FALSE;
